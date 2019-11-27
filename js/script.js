@@ -7,22 +7,26 @@
     let wrongAnswers = 0;
     let answers = []; //Stores the answers (should never be more than 2)
     let currentLevel;
+    let firstGame = true;
 
     const levelEnum = {
         EASY: {
             ROW: 3,
             COL: 4,
-            SIZE: "big"
+            SIZE: "big",
+            TotalCards: 6 //Half of the total amount of shown cards
         },
         MEDIUM: {
             ROW: 5,
             COL: 6,
-            SIZE: "big"
+            SIZE: "big",
+            TotalCards: 15
         },
         HARD: {
             ROW: 7,
             COL: 8,
-            SIZE: "small"
+            SIZE: "small",
+            TotalCards: 28
         }
     }
 
@@ -46,7 +50,9 @@
 
 
         let $pTag = $createElmnt.p();
-        $pTag.append("Choose level to begin:");
+        let strP;
+        firstGame ? strP = "Choose level to begin:" : strP = "You won! Choose a level to restart";
+        $pTag.append(strP);
         mainModalSpan.append($pTag);
 
         let $easyBtn = $createElmnt.button();
@@ -56,6 +62,7 @@
             buildGrid(levelEnum.EASY);
             modal.close();
             currentLevel = levelEnum.EASY;
+            firstGame = false;
         })
 
         let $mediumBtn = $createElmnt.button();
@@ -65,6 +72,7 @@
             currentLevel = levelEnum.MEDIUM;
             buildGrid(levelEnum.MEDIUM);
             modal.close();
+            firstGame = false;
         })
 
         let $hardBtn = $createElmnt.button();
@@ -74,9 +82,17 @@
             currentLevel = levelEnum.HARD;
             buildGrid(levelEnum.HARD);
             modal.close();
+            firstGame = false;
         })
 
         modal.open({ content: mainModalSpan });
+    }
+
+    function clearScreen() {
+        let mainDiv = document.getElementById("mainContainer");
+        while (mainDiv.firstChild) {
+            mainDiv.removeChild(mainDiv.firstChild);
+        }
     }
 
     // ----- buildGrid gets the grid size in form of cols (columns) and rows  ----- \\
@@ -206,9 +222,13 @@
                         answer.removeClass("clickable");
                     })
                     score++;
+                    wrongAnswers++;
                     updateScore();
                     resetAnswers();
-                    console.log("Score: " + score);
+                    if (score == 1) {
+                        startScreen(); 
+                        clearScreen();
+                    }                    
                 } else {
                     wrongAnswers++;
                     updateScore();
@@ -217,6 +237,7 @@
                 break;
         }
     }
+
 
     function checkIfMatch(answersArr) {
         try {
