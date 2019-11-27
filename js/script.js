@@ -2,6 +2,11 @@
 (() => {
     // ----- This is the main div on which we will print our cards ----- \\
     const $mainDiv = $('#mainContainer');
+    let flippedImages = 0;
+    let score = 0;
+    let wrongAnswers = 0;
+    let answers = []; //Stores the answers (should never be more than 2)
+
     const levelEnum = {
         EASY: {
             ROW: 3,
@@ -74,26 +79,17 @@
                 imgsArr = await getImgSrcArray((levelEnum.HARD.COL * levelEnum.HARD.ROW) / 2);
                 break;
         }
+
         for (let i = 0; i < $cardBack.length; i++) {
             let $dogImg = $createElmnt.img();
             let $backImg = $createElmnt.img();
             $dogImg.attr("src", imgsArr[i]);
             $backImg.attr("src", "./img/backcard.jpg");
-            // console.log(imgsArr[i])
             $dogImg.addClass("img-responsive h-100 w-100");
             $backImg.addClass("img-responsive h-100 w-100");
             $($cardFront[i]).append($($backImg));
             $($cardBack[i]).append($($dogImg));
         }
-        // for (let card of $cardBack) {
-        //     let $dogImg = $createElmnt.img();
-        //     $dogImg.attr("src", imgsArr[i]);
-        //     console.log(imgsArr[i])
-        //     $dogImg.addClass("img-responsive h-100 w-100");
-        //     $(card).append($($dogImg));
-        //     i++;
-        // }
-
     }
 
     function shuffle(arr) {
@@ -116,15 +112,72 @@
         return imgsArr;
     }
 
-    function flipImage() {
-        let $this = $(this);
-        $this.css("transform", "rotateY(180deg)");
-        $this.children().css("transform", "rotateY(180deg)");
+    function flipBack($elmnt) {
         setTimeout(function () {
-            console.log('interval works');
-            $this.css("transform", "")
-            $this.children().css("transform", "");
-        }, 5000);
+            $elmnt.css("transform", "");
+            $elmnt.children().css("transform", "");
+            resetAnswers();
+            console.log("Wrong answers: " + wrongAnswers)
+        }, 2000)
+    }
+
+    function flip($elmnt) {
+        $elmnt.css("transform", "rotateY(180deg) scaleX(-1)");
+        $elmnt.children().css("transform", "rotateY(180deg) scaleX(-1)");
+        answers.push($elmnt);
+        console.log("answer pushed: " + answers.length)
+    }
+
+    function resetAnswers() {
+        answers = [];
+        flippedImages = 0;
+    }
+
+    function flipImage() {
+        flippedImages++;
+        let $this = $(this);
+
+        switch (flippedImages) {
+            case 1:
+                flip($this);                
+
+                console.log("less than 2, no flip back");
+                break;
+
+            case 2:
+                flip($this);                
+
+                console.log("more than 2, resetting flipped, checking if match")
+                if (checkIfMatch(answers)) {
+                    answers.forEach(function (answer) {
+                        answer.unbind("click", flipImage);
+                    })
+                    score++;
+                    resetAnswers();
+                    console.log("Score: " + score);
+                } else {
+                    wrongAnswers++;
+                    answers.forEach(answer => flipBack(answer));
+                };
+                break;
+        }
+    }
+
+    function checkIfMatch(answersArr) {
+        try {
+            let card1 = answersArr[0].find('img')[1].currentSrc;
+            let card2 = answersArr[1].find('img')[1].currentSrc;
+            switch (card1) {
+                case card2:
+                    return true;
+                default:
+                    return false;
+            }
+
+        } catch {
+            answers = [];
+            return;
+        }
     }
 
 
