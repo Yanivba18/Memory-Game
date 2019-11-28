@@ -17,14 +17,14 @@
             TotalCards: 6 //Half of the total amount of shown cards
         },
         MEDIUM: {
-            ROW: 5,
+            ROW: 3,
             COL: 6,
-            SIZE: "big",
+            SIZE: "medium",
             TotalCards: 15
         },
         HARD: {
-            ROW: 7,
-            COL: 8,
+            ROW: 4,
+            COL: 6,
             SIZE: "small",
             TotalCards: 28
         }
@@ -43,15 +43,23 @@
 
     function startScreen() {
         let mainModalSpan = $createElmnt.span();
+        
+        let strP;
+        let strTitle;
+        if (firstGame) {
+            strTitle = "Memory Game";
+            strP = "Choose level to begin:";
+        } else {
+            strTitle = "You won!"
+            strP = "Good game! Choose a level to restart"
+        }        
 
         let $h2Title = $createElmnt.h2()
-        $h2Title.append("Memory Game");
+        $h2Title.append(strTitle);
         mainModalSpan.append($h2Title);
 
 
         let $pTag = $createElmnt.p();
-        let strP;
-        firstGame ? strP = "Choose level to begin:" : strP = "You won! Choose a level to restart";
         $pTag.append(strP);
         mainModalSpan.append($pTag);
 
@@ -59,9 +67,10 @@
         $easyBtn.append("Easy Level");
         mainModalSpan.append($easyBtn);
         $easyBtn.click(() => {
+            clearScreen();
+            currentLevel = levelEnum.EASY;
             buildGrid(levelEnum.EASY);
             modal.close();
-            currentLevel = levelEnum.EASY;
             firstGame = false;
         })
 
@@ -69,6 +78,7 @@
         $mediumBtn.append("Medium Level");
         mainModalSpan.append($mediumBtn);
         $mediumBtn.click(() => {
+            clearScreen();
             currentLevel = levelEnum.MEDIUM;
             buildGrid(levelEnum.MEDIUM);
             modal.close();
@@ -79,6 +89,7 @@
         $hardBtn.append("Hard Level");
         mainModalSpan.append($hardBtn);
         $hardBtn.click(() => {
+            clearScreen();
             currentLevel = levelEnum.HARD;
             buildGrid(levelEnum.HARD);
             modal.close();
@@ -108,7 +119,7 @@
             // ---------- Creating cols and appending them to the created row div ---------- \\
             for (let x = 0; x < level.COL; x++) {
                 let $colDiv = $createElmnt.div();
-                $colDiv.addClass(`col-sm cards clickable ${level.SIZE} m-1 text-center p-0`);
+                $colDiv.addClass(`col-lg-2 cards clickable ${level.SIZE} m-1 text-center p-0`);
                 let $innerFlipDiv = $createElmnt.div();
                 $innerFlipDiv.addClass("flip-box-inner");
                 $colDiv.append($innerFlipDiv);
@@ -225,9 +236,8 @@
                     wrongAnswers++;
                     updateScore();
                     resetAnswers();
-                    if (score == 1) {
+                    if (score == currentLevel.TotalCards) {
                         startScreen(); 
-                        clearScreen();
                     }                    
                 } else {
                     wrongAnswers++;
