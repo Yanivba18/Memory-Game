@@ -11,22 +11,22 @@
 
     const levelEnum = {
         EASY: {
-            ROW: 3,
-            COL: 4,
+            ROW: 1,
+            COL: 12,
             SIZE: "big",
             TotalCards: 6 //Half of the total amount of shown cards
         },
         MEDIUM: {
-            ROW: 3,
-            COL: 6,
+            ROW: 1,
+            COL: 18,
             SIZE: "medium",
-            TotalCards: 15
+            TotalCards: 9
         },
         HARD: {
-            ROW: 4,
-            COL: 6,
+            ROW: 1,
+            COL: 24,
             SIZE: "small",
-            TotalCards: 28
+            TotalCards: 12
         }
     }
 
@@ -113,13 +113,13 @@
         // ---------- Creating rows and appending them to main container div ---------- \\
         for (let i = 0; i < level.ROW; i++) {
             let $rowDiv = $createElmnt.div();
-            $rowDiv.addClass("row w-50 justify-content-center w-100");
+            $rowDiv.addClass("row");
             $mainDiv.append($rowDiv);
 
             // ---------- Creating cols and appending them to the created row div ---------- \\
             for (let x = 0; x < level.COL; x++) {
                 let $colDiv = $createElmnt.div();
-                $colDiv.addClass(`col-lg-2 cards clickable ${level.SIZE} m-1 text-center p-0`);
+                $colDiv.addClass(`col-4 col-sm-3 col-md-2 p-1 cards clickable`);
                 let $innerFlipDiv = $createElmnt.div();
                 $innerFlipDiv.addClass("flip-box-inner");
                 $colDiv.append($innerFlipDiv);
@@ -175,11 +175,17 @@
 
     async function getImgSrcArray(amount) {
         let imgsArr = [];
+        console.log("Loading..");
         for (let i = 0; i < amount; i++) {
-            let dogImgSrc = await getRandomDog();
-            imgsArr.push(dogImgSrc.message);
-            imgsArr.push(dogImgSrc.message);
+            try {
+                let dogImgSrc = await getRandomDog();
+                imgsArr.push(dogImgSrc.message);
+                imgsArr.push(dogImgSrc.message);                
+            } catch(error) {
+                console.log(error);
+            }
         }
+        console.log("finished loading..")
         imgsArr = shuffle(imgsArr);
         console.log(imgsArr)
         return imgsArr;
@@ -223,8 +229,11 @@
                 break;
 
             case 2:
+                if (answers[0].attr("style") == $this.attr("style")) {
+                    flippedImages--;
+                    break;
+                }
                 flip($this);
-
                 console.log("more than 2, resetting flipped, checking if match")
                 // -------- Checking if right answer or not -------- \\
                 if (checkIfMatch(answers)) {
@@ -249,7 +258,7 @@
     }
 
 
-    function checkIfMatch(answersArr) {
+    function checkIfMatch(answersArr) {        
         try {
             let card1 = answersArr[0].find('img')[1].currentSrc;
             let card2 = answersArr[1].find('img')[1].currentSrc;
