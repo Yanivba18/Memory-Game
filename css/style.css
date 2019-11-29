@@ -1,6 +1,24 @@
 body {
-    overflow: hidden;
+    overflow-x: hidden;
     ;
+}
+
+.bg { 
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center center;
+}
+
+.bg.default {
+    background-image: url(../img/dogs-good-with-cats.jpg);
+}
+
+.bg.dogs {
+    background-image: url(../img/corgi-and-terrier-running.jpg);
+}
+
+.bg.cats {
+    background-image: url(../img/cats.jpg);
 }
 
 .cards {
@@ -46,10 +64,11 @@ body {
     }
 }
 
+#themesInput {
+    line-height: 0.5;
+}
 
 /* Image flipping css follows */
-
-
 
 
 .flip-box-inner {
@@ -116,9 +135,4 @@ body {
     text-indent: -9999px;
     top: -7px;
     right: -7px;
-}
-
-.mainModal {
-    display: flex;
-    flex-direction: column;
 }
