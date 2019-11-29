@@ -43,16 +43,17 @@
 
     function startScreen() {
         let mainModalSpan = $createElmnt.span();
-        
+        mainModalSpan.addClass("mainModal")
+
         let strP;
         let strTitle;
         if (firstGame) {
             strTitle = "Memory Game";
             strP = "Choose level to begin:";
         } else {
-            strTitle = "You won!"
-            strP = "Good game! Choose a level to restart"
-        }        
+            strTitle = "You won!";
+            strP = "Good game! Choose a level to restart";
+        }
 
         let $h2Title = $createElmnt.h2()
         $h2Title.append(strTitle);
@@ -67,36 +68,34 @@
         $easyBtn.append("Easy Level");
         mainModalSpan.append($easyBtn);
         $easyBtn.click(() => {
-            clearScreen();
             currentLevel = levelEnum.EASY;
-            buildGrid(levelEnum.EASY);
-            modal.close();
-            firstGame = false;
+            onClickFuncs();
         })
 
         let $mediumBtn = $createElmnt.button();
         $mediumBtn.append("Medium Level");
         mainModalSpan.append($mediumBtn);
         $mediumBtn.click(() => {
-            clearScreen();
-            currentLevel = levelEnum.MEDIUM;
-            buildGrid(levelEnum.MEDIUM);
-            modal.close();
-            firstGame = false;
+            currentLevel = levelEnum.MEDIUM;            
+            onClickFuncs();
         })
 
         let $hardBtn = $createElmnt.button();
         $hardBtn.append("Hard Level");
         mainModalSpan.append($hardBtn);
         $hardBtn.click(() => {
-            clearScreen();
             currentLevel = levelEnum.HARD;
-            buildGrid(levelEnum.HARD);
-            modal.close();
-            firstGame = false;
+            onClickFuncs();
         })
 
         modal.open({ content: mainModalSpan });
+    }
+
+    function onClickFuncs() {
+        clearScreen();
+        buildGrid(currentLevel);
+        modal.close();        
+        firstGame = false;
     }
 
     function clearScreen() {
@@ -113,7 +112,7 @@
         // ---------- Creating rows and appending them to main container div ---------- \\
         for (let i = 0; i < level.ROW; i++) {
             let $rowDiv = $createElmnt.div();
-            $rowDiv.addClass("row");
+            $rowDiv.addClass("row justify-content-center");
             $mainDiv.append($rowDiv);
 
             // ---------- Creating cols and appending them to the created row div ---------- \\
@@ -180,8 +179,8 @@
             try {
                 let dogImgSrc = await getRandomDog();
                 imgsArr.push(dogImgSrc.message);
-                imgsArr.push(dogImgSrc.message);                
-            } catch(error) {
+                imgsArr.push(dogImgSrc.message);
+            } catch (error) {
                 console.log(error);
             }
         }
@@ -217,6 +216,40 @@
         $('#correct').text(`Score: ${score}`);
     }
 
+    function menuBtn() {
+        let $menuBtn = $createElmnt.button();
+        // $menuBtn.attr("id", "menuBtn"); //Not sure if I need this, delete if not needed in the end
+        $menuBtn.text("Menu")
+        $menuBtn.click(menuScreen);
+        $('#menu').append($menuBtn);
+    }
+
+    function menuScreen() {
+        let $modalDiv = $createElmnt.div();
+        $modalDiv.addClass("mainModal");
+
+        let $h2Title = $createElmnt.h2();
+        $h2Title.text("Main Menu");
+        $modalDiv.append($h2Title);
+
+        let $resumeBtn = $createElmnt.button();
+        $resumeBtn.text("Resume Game");
+        $resumeBtn.click(modal.close);
+        $modalDiv.append($resumeBtn);
+
+        let $newGameBtn = $createElmnt.button();
+        $newGameBtn.text("New Game");
+        $newGameBtn.click(() => {
+            firstGame = true;
+            startScreen();
+        });
+        $modalDiv.append($newGameBtn);
+
+
+        modal.open( { content : $modalDiv});
+        
+    }
+
     function flipImage() {
         flippedImages++;
         let $this = $(this);
@@ -246,8 +279,8 @@
                     updateScore();
                     resetAnswers();
                     if (score == currentLevel.TotalCards) {
-                        startScreen(); 
-                    }                    
+                        setTimeout(startScreen, 500);
+                    }
                 } else {
                     wrongAnswers++;
                     updateScore();
@@ -258,7 +291,7 @@
     }
 
 
-    function checkIfMatch(answersArr) {        
+    function checkIfMatch(answersArr) {
         try {
             let card1 = answersArr[0].find('img')[1].currentSrc;
             let card2 = answersArr[1].find('img')[1].currentSrc;
@@ -277,91 +310,11 @@
 
 
     // ---------- Name-spacing methods for creating jquery elements ---------- \\    
-    let $createElmnt = (function () {
-        let method = {};
-
-        method.createElementByTag = function (tagName) {
-            return $(document.createElement(tagName));
-        }
-
-        method.div = function () { return this.createElementByTag('div') };
-        method.img = function () { return this.createElementByTag('img') };
-        method.h2 = function () { return this.createElementByTag('h2') };
-        method.span = function () { return this.createElementByTag('span') };
-        method.p = function () { return this.createElementByTag('p') };
-        method.button = function () { return this.createElementByTag('button') };
-        return method;
-    }());
-
-    let modal = (function () {
-        let method = {},
-            $overlay,
-            $modal,
-            $content;
-
-        // Appending the modal HTML
-        $overlay = $('<div id="overlay"></div>');
-        $modal = $('<div id="modal"></div>');
-        $content = $('<div id="content"></div>');
-
-        $modal.hide();
-        $overlay.hide();
-        $modal.append($content);
-
-        $(document).ready(function () {
-            $('body').append($overlay, $modal);
-        });
-        // Center the modal in the viewport
-        method.center = function () {
-            var top, left;
-
-            top = "50%";
-            left = "50%";
-
-            $modal.css({
-                top: top,
-                left: left,
-                transform: "translateX(-50%) translateY(-50%)"
-            });
-        };
-
-        // Open the modal
-        method.open = function (settings) {
-            $content.empty().append(settings.content);
-
-            $modal.css({
-                width: settings.width || 'auto',
-                height: settings.height || 'auto'
-            })
-
-            method.center();
-
-            $(window).bind('resize.modal', method.center);
-
-            $modal.show();
-            $overlay.show();
-        };
-
-        // Close the modal
-        method.close = function () {
-            $modal.hide();
-            $overlay.hide();
-            $content.empty();
-            $(window).unbind('resize.modal');
-        };
-
-        // $close.click(function (e) {
-        //     e.preventDefault();
-        //     method.close();
-        // });
-
-        return method;
-    }());
+    
 
     function main() {
         startScreen();
-        // buildGrid(3, 4);
-        // fillGridImgs();
+        menuBtn();
     }
 
     main();
