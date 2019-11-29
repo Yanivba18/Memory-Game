@@ -93,7 +93,7 @@ body {
     backface-visibility: hidden;
 }
 
-/* Fallback in case image doesn't exist */
+/* Fallback in case image doesn't exist and loading */
 
 .flip-box-front {
     background-color: #bbb;
@@ -129,7 +129,7 @@ body {
 
 #content {
     border-radius: 8px;
-    background: #fff;
+    background: rgba(255, 255, 255, 0.7);
     padding: 20px;
     height: 100%;
 }
