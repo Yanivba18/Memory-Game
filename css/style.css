@@ -30,6 +30,9 @@ body {
     max-width: 80px;
 }
 
+.max-width {
+    max-width: 310px;
+}
 
 @media screen and (min-width: 575px) {
     .max-width {
@@ -46,9 +49,6 @@ body {
 
 /* Image flipping css follows */
 
-.max-width {
-    max-width: 310px;
-}
 
 
 
@@ -95,7 +95,6 @@ body {
 
 #modal {
     position: absolute;
-    background: url(tint20.png) 0 0 repeat;
     background: rgba(0, 0, 0, 0.2);
     border-radius: 14px;
     padding: 8px;
@@ -117,4 +116,9 @@ body {
     text-indent: -9999px;
     top: -7px;
     right: -7px;
+}
+
+.mainModal {
+    display: flex;
+    flex-direction: column;
 }
