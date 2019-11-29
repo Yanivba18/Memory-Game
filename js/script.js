@@ -43,26 +43,49 @@
 
     function startScreen() {
         let mainModalSpan = $createElmnt.span();
-        mainModalSpan.addClass("mainModal")
+        mainModalSpan.addClass("d-flex flex-column")
 
         let strP;
         let strTitle;
         if (firstGame) {
             strTitle = "Memory Game";
-            strP = "Choose level to begin:";
+            strP = "Choose level and theme to begin:";
         } else {
             strTitle = "You won!";
-            strP = "Good game! Choose a level to restart";
+            strP = "Good game! Choose a level and theme to restart";
         }
 
         let $h2Title = $createElmnt.h2()
         $h2Title.append(strTitle);
         mainModalSpan.append($h2Title);
 
-
         let $pTag = $createElmnt.p();
         $pTag.append(strP);
         mainModalSpan.append($pTag);
+
+        let $inputDiv = $createElmnt.div();   
+        $inputDiv.addClass("d-flex justify-content-around p-2");
+        $inputDiv.attr("id", "themesInput")
+        
+        $inputDiv.append("Dogs:");
+        let $inputDogs = $createElmnt.input();
+        $inputDogs.attr({
+            type: "radio",
+            value: "dogs",
+            name: "theme"
+        });
+        $inputDiv.append($inputDogs);
+        
+        $inputDiv.append("Cats:");
+        let $inputCats = $createElmnt.input();
+        $inputCats.attr({
+            type: "radio",
+            value: "cats",
+            name: "theme"
+        });
+        $inputDiv.append($inputCats);
+
+        mainModalSpan.append($inputDiv);
 
         let $easyBtn = $createElmnt.button();
         $easyBtn.append("Easy Level");
@@ -108,6 +131,7 @@
     // ----- buildGrid gets the grid size in form of cols (columns) and rows  ----- \\
     // -----          and adds bootstrap components of row and col             ----- \\
     function buildGrid(level) {
+        resetScore();
         updateScore();
         // ---------- Creating rows and appending them to main container div ---------- \\
         for (let i = 0; i < level.ROW; i++) {
@@ -216,9 +240,13 @@
         $('#correct').text(`Score: ${score}`);
     }
 
+    function resetScore() {
+        wrongAnswers = 0;
+        score = 0;        
+    }
+
     function menuBtn() {
         let $menuBtn = $createElmnt.button();
-        // $menuBtn.attr("id", "menuBtn"); //Not sure if I need this, delete if not needed in the end
         $menuBtn.text("Menu")
         $menuBtn.click(menuScreen);
         $('#menu').append($menuBtn);
@@ -226,7 +254,7 @@
 
     function menuScreen() {
         let $modalDiv = $createElmnt.div();
-        $modalDiv.addClass("mainModal");
+        $modalDiv.addClass("d-flex flex-column");
 
         let $h2Title = $createElmnt.h2();
         $h2Title.text("Main Menu");
@@ -280,6 +308,7 @@
                     resetAnswers();
                     if (score == currentLevel.TotalCards) {
                         setTimeout(startScreen, 500);
+                        resetScore();
                     }
                 } else {
                     wrongAnswers++;

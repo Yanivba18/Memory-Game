@@ -12,6 +12,7 @@ let $createElmnt = (function () {
     method.span = function () { return this.createElementByTag('span') };
     method.p = function () { return this.createElementByTag('p') };
     method.button = function () { return this.createElementByTag('button') };
+    method.input = function () { return this.createElementByTag('input')};
     return method;
 }());
 
