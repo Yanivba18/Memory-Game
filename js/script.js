@@ -149,6 +149,9 @@
                 theme = radio.value;
             }
         })
+        let bg = document.getElementById("bg");
+        bg.classList.remove("default", "cats", "dogs");
+        bg.classList.add(`${theme}`);
         return theme;
     }
 
