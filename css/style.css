@@ -4,9 +4,9 @@ body {
 }
 
 .bg { 
-    background-repeat: no-repeat;
-    background-size: cover;
+    background-repeat: no-repeat;    
     background-position: center center;
+    background-attachment: fixed;
 }
 
 .bg.default {
@@ -19,6 +19,10 @@ body {
 
 .bg.cats {
     background-image: url(../img/cats.jpg);
+}
+
+#mainContainer {
+    padding-top: 10%;
 }
 
 .cards {
@@ -92,6 +96,9 @@ body {
 
 .flip-box-front {
     background-color: #bbb;
+    background-image: url(../img/loading.gif);
+    background-size: contain;
+    background-position: center center;
     color: black;
 }
 
