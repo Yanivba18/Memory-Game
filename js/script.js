@@ -41,6 +41,17 @@
         return dogImg;
     }
 
+    function getRandomCat() {
+        let catImg;
+        console.log('fetching random cat');
+        catImg = $.ajax({
+            method: "GET",
+            url: "https://aws.random.cat/meow",
+            dataType: "JSON"
+        }).promise()
+        return catImg;
+    }
+
     function startScreen() {
         let mainModalSpan = $createElmnt.span();
         mainModalSpan.addClass("d-flex flex-column")
@@ -72,7 +83,8 @@
         $inputDogs.attr({
             type: "radio",
             value: "dogs",
-            name: "theme"
+            name: "theme",  
+            checked: "checked"
         });
         $inputDiv.append($inputDogs);
         
@@ -115,8 +127,9 @@
     }
 
     function onClickFuncs() {
+        let theme = getTheme()
         clearScreen();
-        buildGrid(currentLevel);
+        buildGrid(theme, currentLevel);
         modal.close();        
         firstGame = false;
     }
@@ -128,9 +141,20 @@
         }
     }
 
+    function getTheme() {
+        let themes = document.getElementsByName("theme");
+        let theme;
+        themes.forEach((radio) => {
+            if (radio.checked) {
+                theme = radio.value;
+            }
+        })
+        return theme;
+    }
+
     // ----- buildGrid gets the grid size in form of cols (columns) and rows  ----- \\
     // -----          and adds bootstrap components of row and col             ----- \\
-    function buildGrid(level) {
+    function buildGrid(theme, level) {
         resetScore();
         updateScore();
         // ---------- Creating rows and appending them to main container div ---------- \\
@@ -157,22 +181,22 @@
                 $colDiv.click(flipImage);
             }
         }
-        fillGridImgs(level);
+        fillGridImgs(theme, level);
     }
     // ----- filling the grid with the images from the dog API ---------- \\\\
-    async function fillGridImgs(level) {
+    async function fillGridImgs(theme, level) {
         let $cardFront = $('.flip-box-front');
         let $cardBack = $('.flip-box-back');
         let imgsArr = [];
         switch (level) {
             case levelEnum.EASY:
-                imgsArr = await getImgSrcArray((levelEnum.EASY.COL * levelEnum.EASY.ROW) / 2);
+                imgsArr = await getImgSrcArray(theme, (levelEnum.EASY.COL * levelEnum.EASY.ROW) / 2);
                 break;
             case levelEnum.MEDIUM:
-                imgsArr = await getImgSrcArray((levelEnum.MEDIUM.COL * levelEnum.MEDIUM.ROW) / 2);
+                imgsArr = await getImgSrcArray(theme, (levelEnum.MEDIUM.COL * levelEnum.MEDIUM.ROW) / 2);
                 break;
             case levelEnum.HARD:
-                imgsArr = await getImgSrcArray((levelEnum.HARD.COL * levelEnum.HARD.ROW) / 2);
+                imgsArr = await getImgSrcArray(theme, (levelEnum.HARD.COL * levelEnum.HARD.ROW) / 2);
                 break;
         }
 
@@ -196,14 +220,21 @@
         return arr;
     }
 
-    async function getImgSrcArray(amount) {
+    async function getImgSrcArray(theme ,amount) {
         let imgsArr = [];
         console.log("Loading..");
         for (let i = 0; i < amount; i++) {
             try {
-                let dogImgSrc = await getRandomDog();
-                imgsArr.push(dogImgSrc.message);
-                imgsArr.push(dogImgSrc.message);
+                let imgSrc;
+                if (theme == "dogs") {
+                    imgSrc = await getRandomDog();
+                    imgsArr.push(imgSrc.message);
+                    imgsArr.push(imgSrc.message);
+                } else {
+                    imgSrc = await getRandomCat();
+                    imgsArr.push(imgSrc.file);
+                    imgsArr.push(imgSrc.file);
+                }
             } catch (error) {
                 console.log(error);
             }
@@ -307,7 +338,7 @@
                     updateScore();
                     resetAnswers();
                     if (score == currentLevel.TotalCards) {
-                        setTimeout(startScreen, 500);
+                        setTimeout(startScreen, 1000);
                         resetScore();
                     }
                 } else {
