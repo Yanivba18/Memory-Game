@@ -13,19 +13,19 @@
         EASY: {
             ROW: 1,
             COL: 12,
-            SIZE: "big",
+            LEVEL: "Easy",
             TotalCards: 6 //Half of the total amount of shown cards
         },
         MEDIUM: {
             ROW: 1,
             COL: 18,
-            SIZE: "medium",
+            LEVEL: "Medium",
             TotalCards: 9
         },
         HARD: {
             ROW: 1,
             COL: 24,
-            SIZE: "small",
+            LEVEL: "Hard",
             TotalCards: 12
         }
     }
@@ -54,7 +54,7 @@
 
     function startScreen() {
         let mainModalSpan = $createElmnt.span();
-        mainModalSpan.addClass("d-flex flex-column")
+        mainModalSpan.addClass("d-flex flex-column align-items-center");
 
         let strP;
         let strTitle;
@@ -62,7 +62,7 @@
             strTitle = "Memory Game";
             strP = "Choose level and theme to begin:";
         } else {
-            strTitle = "You won!";
+            strTitle = `You won!`;
             strP = "Good game! Choose a level and theme to restart";
         }
 
@@ -74,20 +74,20 @@
         $pTag.append(strP);
         mainModalSpan.append($pTag);
 
-        let $inputDiv = $createElmnt.div();   
-        $inputDiv.addClass("d-flex justify-content-around p-2");
+        let $inputDiv = $createElmnt.div();
+        $inputDiv.addClass("container-fluid d-flex justify-content-around p-2");
         $inputDiv.attr("id", "themesInput")
-        
+
         $inputDiv.append("Dogs:");
         let $inputDogs = $createElmnt.input();
         $inputDogs.attr({
             type: "radio",
             value: "dogs",
-            name: "theme",  
+            name: "theme",
             checked: "checked"
         });
         $inputDiv.append($inputDogs);
-        
+
         $inputDiv.append("Cats:");
         let $inputCats = $createElmnt.input();
         $inputCats.attr({
@@ -111,7 +111,7 @@
         $mediumBtn.append("Medium Level");
         mainModalSpan.append($mediumBtn);
         $mediumBtn.click(() => {
-            currentLevel = levelEnum.MEDIUM;            
+            currentLevel = levelEnum.MEDIUM;
             onClickFuncs();
         })
 
@@ -123,6 +123,11 @@
             onClickFuncs();
         })
 
+        let $highScore = $createElmnt.button();
+        $highScore.text("High Scores");
+        $highScore.click(highScoreModal);
+        mainModalSpan.append($highScore);
+
         modal.open({ content: mainModalSpan });
     }
 
@@ -130,8 +135,46 @@
         let theme = getTheme()
         clearScreen();
         buildGrid(theme, currentLevel);
-        modal.close();        
+        modal.close();
         firstGame = false;
+    }
+
+    function saveScreen() {
+        let $mainDiv = $createElmnt.div();
+        $mainDiv.addClass("d-flex flex-column justify-content-around p-2");
+
+        let $h2Title = $createElmnt.h2();
+        $h2Title.text(`You won in ${wrongAnswers} tries`);
+        $h2Title.addClass('p-2');
+        $mainDiv.append($h2Title);
+        $mainDiv.append("Enter your name to save the score:")
+        let $textInput = $createElmnt.input();
+        $textInput.attr({
+            type: "text",
+            id: "name",
+        });
+        $mainDiv.append($textInput);
+
+        let $saveBtn = $createElmnt.button();
+        $saveBtn.text("Save score");
+        $saveBtn.click(() => {
+            let lvlScoresArr = JSON.parse(localStorage.getItem(currentLevel.LEVEL));
+            if (lvlScoresArr == null) {
+                lvlScoresArr = [];
+            }
+
+            let score = {
+                name: $("#name").val(),
+                tries: wrongAnswers,
+            }
+            lvlScoresArr.push(score);
+            localStorage.setItem(currentLevel.LEVEL, JSON.stringify(lvlScoresArr));
+            resetScore();
+            startScreen();
+        })
+        $mainDiv.append($saveBtn);
+
+        modal.open({ content: $mainDiv })
     }
 
     function clearScreen() {
@@ -223,7 +266,7 @@
         return arr;
     }
 
-    async function getImgSrcArray(theme ,amount) {
+    async function getImgSrcArray(theme, amount) {
         let imgsArr = [];
         console.log("Loading..");
         for (let i = 0; i < amount; i++) {
@@ -254,7 +297,7 @@
             $elmnt.children().css("transform", "");
             resetAnswers();
             console.log("Wrong answers: " + wrongAnswers)
-        }, 1500)
+        }, 1000)
     }
 
     function flip($elmnt) {
@@ -276,14 +319,92 @@
 
     function resetScore() {
         wrongAnswers = 0;
-        score = 0;        
+        score = 0;
     }
 
-    function menuBtn() {
+    function mainBtns() {
         let $menuBtn = $createElmnt.button();
+        $menuBtn.removeClass("m-1")
         $menuBtn.text("Menu")
         $menuBtn.click(menuScreen);
         $('#menu').append($menuBtn);
+
+        let $highScore = $createElmnt.button();
+        $highScore.text("High Scores");
+        $highScore.click(highScoreModal);
+        $('#highscore').append($highScore);
+    }
+
+    function highScoreModal() {
+        let $mainDiv = $createElmnt.div();
+        $mainDiv.addClass("d-flex flex-column justify-content-around p-2");
+
+        let easy = JSON.parse(localStorage.getItem("Easy"));
+        let medium = JSON.parse(localStorage.getItem("Medium"));
+        let hard = JSON.parse(localStorage.getItem("Hard"));
+        let levelTitle = $createElmnt.h3();
+        levelTitle.text("Easy - High Scores");
+        $mainDiv.append(levelTitle);
+        let listContainerEasy = $createElmnt.createElementByTag("ul");
+
+        console.log(easy);
+        try {
+            easy = [].slice.call(easy).sort(function (a, b) {
+                return a.tries - b.tries;
+            });
+            console.log(easy);
+            easy.forEach((item) => {
+                listContainerEasy.append(`<li>${item.name} | Tries: ${item.tries}</li>`)
+            })
+        } catch (e) {
+            console.log("No saved games in easy level");
+            listContainerHard.append("No saved games yet");
+        }
+        $mainDiv.append(listContainerEasy);
+
+        levelTitle = $createElmnt.h3();
+        levelTitle.text("Medium - High Scores");
+        $mainDiv.append(levelTitle);
+        let listContainerMedium = $createElmnt.createElementByTag('ul');
+        console.log(medium);
+        try {
+            medium = [].slice.call(medium).sort(function (a, b) {
+                return a.tries - b.tries;
+            });
+            console.log(medium);
+            medium.forEach((item) => {
+                listContainerMedium.append(`<li>${item.name} | Tries: ${item.tries}</li>`)
+            })
+        } catch (e) {
+            console.log("No saved games in medium level");
+            listContainerHard.append("No saved games yet")
+        }
+        $mainDiv.append(listContainerMedium);
+
+        levelTitle = $createElmnt.h3();
+        levelTitle.text("Hard - High Scores");
+        $mainDiv.append(levelTitle);
+        let listContainerHard = $createElmnt.createElementByTag('ul');
+        console.log(hard);
+        try {
+            hard = [].slice.call(hard).sort(function (a, b) {
+                return a.tries - b.tries;
+            });
+            hard.forEach((item) => {
+                listContainerHard.append(`<li>${item.name} | Tries: ${item.tries}</li>`)
+            })
+        } catch (e) {
+            console.log("No saved games in hard level");
+            listContainerHard.append("No saved games yet")
+        }
+        $mainDiv.append(listContainerHard);
+        let closeBtn = $createElmnt.button();
+        closeBtn.text("Close");
+        closeBtn.click(modal.close);
+        $mainDiv.append(closeBtn);
+
+
+        modal.open({ content: ($mainDiv) });
     }
 
     function menuScreen() {
@@ -308,8 +429,8 @@
         $modalDiv.append($newGameBtn);
 
 
-        modal.open( { content : $modalDiv});
-        
+        modal.open({ content: $modalDiv });
+
     }
 
     function flipImage() {
@@ -340,9 +461,8 @@
                     wrongAnswers++;
                     updateScore();
                     resetAnswers();
-                    if (score == currentLevel.TotalCards) {
-                        setTimeout(startScreen, 1000);
-                        resetScore();
+                    if (score == 1) { //currentLevel.TotalCards
+                        setTimeout(saveScreen, 1000);
                     }
                 } else {
                     wrongAnswers++;
@@ -372,12 +492,10 @@
     }
 
 
-    // ---------- Name-spacing methods for creating jquery elements ---------- \\    
-    
 
     function main() {
         startScreen();
-        menuBtn();
+        mainBtns();
     }
 
     main();
