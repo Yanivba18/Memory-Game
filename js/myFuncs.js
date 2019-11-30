@@ -9,9 +9,14 @@ let $createElmnt = (function () {
     method.div = function () { return this.createElementByTag('div') };
     method.img = function () { return this.createElementByTag('img') };
     method.h2 = function () { return this.createElementByTag('h2') };
+    method.h3 = function () { return this.createElementByTag('h3') };
     method.span = function () { return this.createElementByTag('span') };
     method.p = function () { return this.createElementByTag('p') };
-    method.button = function () { return this.createElementByTag('button') };
+    method.button = function () { 
+        let $btn = this.createElementByTag('button');
+        $btn.addClass("btn btn-primary w-100 m-1");
+        return  $btn;
+    };
     method.input = function () { return this.createElementByTag('input')};
     return method;
 }());
