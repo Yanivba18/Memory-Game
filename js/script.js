@@ -461,7 +461,7 @@
                     wrongAnswers++;
                     updateScore();
                     resetAnswers();
-                    if (score == 1) { //currentLevel.TotalCards
+                    if (score == currentLevel.TotalCards) {
                         setTimeout(saveScreen, 1000);
                     }
                 } else {
