@@ -78,10 +78,5 @@ let modal = (function () {
         $(window).unbind('resize.modal');
     };
 
-    // $close.click(function (e) {
-    //     e.preventDefault();
-    //     method.close();
-    // });
-
     return method;
 }());

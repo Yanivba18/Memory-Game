@@ -32,7 +32,6 @@
 
     function getRandomDog() {
         let dogImg;
-        console.log('fetching random dog')
         dogImg = $.ajax({
             method: "GET",
             url: "https://dog.ceo/api/breeds/image/random",
@@ -43,7 +42,6 @@
 
     function getRandomCat() {
         let catImg;
-        console.log('fetching random cat');
         catImg = $.ajax({
             method: "GET",
             url: "https://aws.random.cat/meow",
@@ -268,7 +266,6 @@
 
     async function getImgSrcArray(theme, amount) {
         let imgsArr = [];
-        console.log("Loading..");
         for (let i = 0; i < amount; i++) {
             try {
                 let imgSrc;
@@ -285,9 +282,7 @@
                 console.log(error);
             }
         }
-        console.log("finished loading..")
         imgsArr = shuffle(imgsArr);
-        console.log(imgsArr)
         return imgsArr;
     }
 
@@ -296,7 +291,6 @@
             $elmnt.css("transform", "");
             $elmnt.children().css("transform", "");
             resetAnswers();
-            console.log("Wrong answers: " + wrongAnswers)
         }, 1000)
     }
 
@@ -304,7 +298,6 @@
         $elmnt.css("transform", "rotateY(180deg) scaleX(-1)");
         $elmnt.children().css("transform", "rotateY(180deg) scaleX(-1)");
         answers.push($elmnt);
-        console.log("answer pushed: " + answers.length)
     }
 
     function resetAnswers() {
@@ -347,12 +340,10 @@
         $mainDiv.append(levelTitle);
         let listContainerEasy = $createElmnt.createElementByTag("ul");
 
-        console.log(easy);
         try {
             easy = [].slice.call(easy).sort(function (a, b) {
                 return a.tries - b.tries;
             });
-            console.log(easy);
             easy.forEach((item) => {
                 listContainerEasy.append(`<li>${item.name} | Tries: ${item.tries}</li>`)
             })
@@ -366,12 +357,10 @@
         levelTitle.text("Medium - High Scores");
         $mainDiv.append(levelTitle);
         let listContainerMedium = $createElmnt.createElementByTag('ul');
-        console.log(medium);
         try {
             medium = [].slice.call(medium).sort(function (a, b) {
                 return a.tries - b.tries;
             });
-            console.log(medium);
             medium.forEach((item) => {
                 listContainerMedium.append(`<li>${item.name} | Tries: ${item.tries}</li>`)
             })
@@ -385,7 +374,6 @@
         levelTitle.text("Hard - High Scores");
         $mainDiv.append(levelTitle);
         let listContainerHard = $createElmnt.createElementByTag('ul');
-        console.log(hard);
         try {
             hard = [].slice.call(hard).sort(function (a, b) {
                 return a.tries - b.tries;
@@ -440,8 +428,6 @@
         switch (flippedImages) {
             case 1:
                 flip($this);
-
-                console.log("less than 2, no flip back");
                 break;
 
             case 2:
@@ -450,7 +436,6 @@
                     break;
                 }
                 flip($this);
-                console.log("more than 2, resetting flipped, checking if match")
                 // -------- Checking if right answer or not -------- \\
                 if (checkIfMatch(answers)) {
                     answers.forEach(function (answer) {
