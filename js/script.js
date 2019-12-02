@@ -339,6 +339,8 @@
         levelTitle.text("Easy - High Scores");
         $mainDiv.append(levelTitle);
         let listContainerEasy = $createElmnt.createElementByTag("ul");
+        let listContainerMedium = $createElmnt.createElementByTag('ul');
+        let listContainerHard = $createElmnt.createElementByTag('ul');
 
         try {
             easy = [].slice.call(easy).sort(function (a, b) {
@@ -356,7 +358,6 @@
         levelTitle = $createElmnt.h3();
         levelTitle.text("Medium - High Scores");
         $mainDiv.append(levelTitle);
-        let listContainerMedium = $createElmnt.createElementByTag('ul');
         try {
             medium = [].slice.call(medium).sort(function (a, b) {
                 return a.tries - b.tries;
@@ -373,7 +374,6 @@
         levelTitle = $createElmnt.h3();
         levelTitle.text("Hard - High Scores");
         $mainDiv.append(levelTitle);
-        let listContainerHard = $createElmnt.createElementByTag('ul');
         try {
             hard = [].slice.call(hard).sort(function (a, b) {
                 return a.tries - b.tries;
