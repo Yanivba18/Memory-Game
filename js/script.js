@@ -351,7 +351,7 @@
             })
         } catch (e) {
             console.log("No saved games in easy level");
-            listContainerHard.append("No saved games yet");
+            listContainerEasy.append("No saved games yet");
         }
         $mainDiv.append(listContainerEasy);
 
@@ -367,7 +367,7 @@
             })
         } catch (e) {
             console.log("No saved games in medium level");
-            listContainerHard.append("No saved games yet")
+            listContainerMedium.append("No saved games yet")
         }
         $mainDiv.append(listContainerMedium);
 
